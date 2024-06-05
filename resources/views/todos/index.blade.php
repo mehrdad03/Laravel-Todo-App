@@ -11,6 +11,37 @@
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">ToDo App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {{--<li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>--}}
+
+            @auth
+                <li class="nav-item">
+                    <a class="nav-link" href="#" tabindex="-1" >Hi {{auth()->user()->name}}</a>
+                </li>
+            @else
+                <li class="nav-item">
+                    <a class="nav-link" href="#" tabindex="-1" >Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" tabindex="-1">Register</a>
+                </li>
+            @endauth
+
+
+        </ul>
+
+    </div>
+</nav>
+
 <div class="container mt-5">
     <h1 class="mb-4">Todo App</h1>
 
@@ -54,7 +85,7 @@
                     <p class="mb-0">{{$item->description}}</p>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-warning btn-sm mr-2 edit-btn" data-index="0">Edit</button>
+                    <a href="{{route('edit',$item->id)}}" type="button" class="btn btn-warning btn-sm mr-2 edit-btn" data-index="0">Edit</a>
                     <form action="{{route('delete',$item->id)}}" method="post">
                         @csrf
                         @method('DELETE')

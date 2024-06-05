@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TodoController extends Controller
@@ -14,9 +15,10 @@ class TodoController extends Controller
     public function index()
     {
         //Eloquent ORM
-        $todos=Todo::query()->get();
-        //Query Builder
-      //  $todos=DB::table('todos')->get();
+        $todos=Todo::query()
+            ->where('user_id',Auth::user()->id)
+            ->get();
+
         return view('todos.index',['todos'=>$todos]);
     }
 
@@ -35,7 +37,7 @@ class TodoController extends Controller
     {
 
         $request->validate([
-            'title'=>'required|string|max:10',
+            'title'=>'required|string|max:50',
             'description'=>'nullable|string|max:255',
         ],[
             'title.required'=>'عنوان الزامی است.',
@@ -43,11 +45,14 @@ class TodoController extends Controller
         ]);
 
 
+       // dd(Auth::user());
+
 
         //Eloquent ORM
         Todo::query()->create([
             'title'=>$request->title,
             'description'=>$request->description,
+            'user_id'=>Auth::user()->id
 
         ]);
 
@@ -94,9 +99,13 @@ class TodoController extends Controller
         //$todo=Todo::query()->where('id',$id)->first();
         //$todo->update($request->all());
 
-        Todo::query()->where('id',$id)->update([
+        Todo::query()->where([
+            'id'=>$id,
+            'user_id'=>Auth::user()->id
+        ])->update([
             'title'=>$request->title,
             'description'=>$request->description,
+
         ]);
 
         return redirect()->route('index')->with('success','operation successfully');
@@ -107,7 +116,10 @@ class TodoController extends Controller
      */
     public function destroy(string $id)
     {
-        $todo=Todo::query()->where('id',$id)->first();
+        $todo=Todo::query()->where([
+            'id'=>$id,
+            'user_id'=>Auth::user()->id
+        ])->first();
         if ($todo){
             Todo::query()->where('id',$id)->delete();
             return back()->with('success','operation successfully');
