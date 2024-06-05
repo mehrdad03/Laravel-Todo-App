@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TodoController extends Controller
 {
@@ -11,7 +13,11 @@ class TodoController extends Controller
      */
     public function index()
     {
-        return view('todos.index');
+        //Eloquent ORM
+        $todos=Todo::query()->get();
+        //Query Builder
+      //  $todos=DB::table('todos')->get();
+        return view('todos.index',['todos'=>$todos]);
     }
 
     /**
@@ -27,7 +33,36 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'title'=>'required|string|max:10',
+            'description'=>'nullable|string|max:255',
+        ],[
+            'title.required'=>'عنوان الزامی است.',
+            'title.max'=>'حداکثر کارکترهای مجاز : 10',
+        ]);
+
+
+
+        //Eloquent ORM
+        Todo::query()->create([
+            'title'=>$request->title,
+            'description'=>$request->description,
+
+        ]);
+
+        //Query Builder
+        /*DB::table('todos')->insert([
+            'title'=>$request->title,
+            'description'=>$request->description,
+            'created_at'=>now(),
+            'updated_at'=>now(),
+
+        ]);*/
+
+        return back()->with('success','operation successfully');
+
+
     }
 
     /**
@@ -43,7 +78,10 @@ class TodoController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $todo=Todo::query()->where('id',$id)->first();
+        return view('todos.edit',['todo'=>$todo]);
+
+
     }
 
     /**
@@ -51,7 +89,17 @@ class TodoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+
+        //$todo=Todo::query()->where('id',$id)->first();
+        //$todo->update($request->all());
+
+        Todo::query()->where('id',$id)->update([
+            'title'=>$request->title,
+            'description'=>$request->description,
+        ]);
+
+        return redirect()->route('index')->with('success','operation successfully');
     }
 
     /**
@@ -59,6 +107,14 @@ class TodoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $todo=Todo::query()->where('id',$id)->first();
+        if ($todo){
+            Todo::query()->where('id',$id)->delete();
+            return back()->with('success','operation successfully');
+        }else{
+            return back()->with('failed','Id invalid!');
+        }
+
+
     }
 }

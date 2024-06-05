@@ -50,7 +50,7 @@ body {
     z-index: 100;
 }
 .alert {
-    display: none;
+/*    display: none;*/
     position: relative;
     margin-bottom: 15px;
     padding: 0.75rem 1.25rem;

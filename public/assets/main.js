@@ -32,7 +32,7 @@
     const alertContainer = document.getElementById('alertContainer');
 
     taskForm.addEventListener('submit', function(event) {
-    event.preventDefault();
+    // event.preventDefault();
     const taskValue = taskInput.value.trim();
     const taskDescriptionValue = taskDescription.value.trim();
     const taskIndex = taskIndexInput.value;
