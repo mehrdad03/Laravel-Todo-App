@@ -54,7 +54,7 @@
                     <p class="mb-0">{{$item->description}}</p>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-warning btn-sm mr-2 edit-btn" data-index="0">Edit</button>
+                    <a href="{{route('edit',$item->id)}}" type="button" class="btn btn-warning btn-sm mr-2 edit-btn" data-index="0">Edit</a>
                     <form action="{{route('delete',$item->id)}}" method="post">
                         @csrf
                         @method('DELETE')
